@@ -99,35 +99,35 @@ Citizen.CreateThread(function()
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("freightcar")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("freightgrain")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("freightcont1")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("freightcont2")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("freighttrailer")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
@@ -141,21 +141,21 @@ Citizen.CreateThread(function()
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("metrotrain")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		
+
 		tempmodel = GetHashKey("s_m_m_lsmetro_01")
 		RequestModel(tempmodel)
 		while not HasModelLoaded(tempmodel) do
 			RequestModel(tempmodel)
 			Citizen.Wait(0)
 		end
-		if Debug then 
+		if Debug then
 			if Debug then print("FiveM-Trains: Train Models Loaded" ) end
 		end
 	end
@@ -166,8 +166,8 @@ Citizen.CreateThread(function()
 	function StartTrain()
 		randomSpawn = math.random(#TrainLocations)
 		x,y,z = TrainLocations[randomSpawn][1], TrainLocations[randomSpawn][2], TrainLocations[randomSpawn][3] -- get some random locations for our spawn
-	
-	
+
+
 		-- For those whom are interested: The yesorno variable determines the direction of the train ;)
 		yesorno = math.random(0,100)
 		if yesorno >= 50 then -- untested, but seems to work /shrug
@@ -175,7 +175,7 @@ Citizen.CreateThread(function()
 		elseif yesorno < 50 then
 			yesorno = false
 		end
-		
+
 		--====================================================================================
 		-- Note: This (DeleteAllTrains()) might work when you join a session or so which
 		-- has 'roque trains' (aka with no host or where the host just left while you joined)
@@ -199,7 +199,7 @@ Citizen.CreateThread(function()
 		end
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
-		
+
 		MetroTrain = CreateMissionTrain(24,40.2,-1201.3,31.0,true) -- these ones have pre-defined spawns since they are a pain to set up
 		if Debug then print("FiveM-Trains: Train 2 created (Metro)." ) end
 		while not DoesEntityExist(MetroTrain) do
@@ -208,7 +208,7 @@ Citizen.CreateThread(function()
 		end
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
-		
+
 		if UseTwoMetros == 1 then
 			MetroTrain2 = CreateMissionTrain(24,-618.0,-1476.8,16.2,true)
 			if Debug then print("FiveM-Trains: Train 3 created (Metro #2)." ) end
@@ -229,7 +229,7 @@ Citizen.CreateThread(function()
 		if UseTwoMetros == 1 then
 			Driver3 = CreatePedInsideVehicle(MetroTrain2, 26, TrainDriverHash, -1, 1, true) -- create peds for the trains
 		end
-		
+
 		--=========================================================
 		-- XNL 'Addition': This SHOULD prevent the train driver(s)
 		-- from getting shot or fleeing out of the train/tram when
@@ -250,7 +250,7 @@ Citizen.CreateThread(function()
 		SetPedFleeAttributes(Driver3, 0, 0)
 		SetEntityInvincible(Driver3, true)
 		SetEntityAsMissionEntity(Driver3, true)
-	
+
 		SetEntityAsMissionEntity(Train,true,true) -- dunno if this does anything, just throwing it in for good measure
 		SetEntityAsMissionEntity(MetroTrain,true,true)
 
@@ -265,7 +265,7 @@ Citizen.CreateThread(function()
 			SetEntityAsMissionEntity(MetroTrain2,true,true)
 			SetEntityInvincible(MetroTrain2, true)
 		end
-		
+
 		-- Cleanup from memory
 		SetModelAsNoLongerNeeded(TrainDriverHash)
 
@@ -281,7 +281,7 @@ Citizen.CreateThread(function()
 	ShowedLeaveMetroHelper = false
 	while true do
 		Wait(10)
-		
+
 		if IsPlayerNearTicketMachine then
 			if not IsPlayerUsingTicketMachine  then
 				if not ShowedBuyTicketHelper then
@@ -289,19 +289,19 @@ Citizen.CreateThread(function()
 					ShowedBuyTicketHelper = true
 				end
 			else
-				ClearAllHelpMessages()				
+				ClearAllHelpMessages()
 				DisableControlAction(0, 201, true)
-				DisableControlAction(1, 201, true)				
+				DisableControlAction(1, 201, true)
 			end
 
-			if IsControlJustPressed(0, 51) and PlayerHasMetroTicket then	
+			if IsControlJustPressed(0, 51) and PlayerHasMetroTicket then
 				SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['already_got_ticket'], true)
 				Wait(3500) -- To avoid people 'spamming themselves' with the message popup (3500ms is 'just enough' to take the fun out of it :P)
 			end
-			
-			if IsControlJustPressed(0, 51) and not PlayerHasMetroTicket then	
+
+			if IsControlJustPressed(0, 51) and not PlayerHasMetroTicket then
 				IsPlayerUsingTicketMachine = true
-				RequestAnimDict("mini@atmbase")		
+				RequestAnimDict("mini@atmbase")
 				RequestAnimDict(anim)
 				while not HasAnimDictLoaded(anim) do
 					Wait(1)
@@ -310,16 +310,16 @@ Citizen.CreateThread(function()
 				SetCurrentPedWeapon(playerPed, GetHashKey("weapon_unarmed"), true)
 				TaskLookAtEntity(playerPed, currentTicketMachine, 2000, 2048, 2)
 				Wait(500)
-				TaskGoStraightToCoord(playerPed, TicketMX, TicketMY, TicketMZ, 0.1, 4000, GetEntityHeading(currentTicketMachine), 0.5)				
+				TaskGoStraightToCoord(playerPed, TicketMX, TicketMY, TicketMZ, 0.1, 4000, GetEntityHeading(currentTicketMachine), 0.5)
 				Wait(2000)
 				TaskPlayAnim(playerPed, anim, "enter", 8.0, 1.0, -1, 0, 0.0, 0, 0, 0)
 				RemoveAnimDict(animDict)
 				Wait(4000)
 				TaskPlayAnim(playerPed, "mini@atmbase", "base", 8.0, 1.0, -1, 0, 0.0, 0, 0, 0)
-				RemoveAnimDict("mini@atmbase")				
+				RemoveAnimDict("mini@atmbase")
 				Wait(500)
 				PlaySoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-				
+
 				RequestAnimDict("mini@atmexit")
 				while not HasAnimDictLoaded("mini@atmexit") do
 					Wait(1)
@@ -327,22 +327,22 @@ Citizen.CreateThread(function()
 				TaskPlayAnim(playerPed, "mini@atmexit", "exit", 8.0, 1.0, -1, 0, 0.0, 0, 0, 0)
 				RemoveAnimDict("mini@atmexit")
 				Wait(500)
-				
+
 				--=====================================================================================
 				-- Put here the actual 'reader'/function that your server uses
 				-- to calculate/get the players bank account saldo and cash money!
 				-- Now they are just set 'hardcoded' to an high amount to make the
 				-- script work for people whom don't read a single line of code
 				-- and then instantly post "Hey, i can't even buy a ticket, the script is broken" :P
-				-- 
+				--
 				-- Nope it's NOT broken, it just needs a BIT of adapting to your server and it's
-				-- money handling. Since we use a custom banking system we have much different calls 
+				-- money handling. Since we use a custom banking system we have much different calls
 				-- than others might have so i've decided to put it in here like this so that it
 				-- functions for everyone when they want to test/try the script :)
 				--=====================================================================================
 				BankAmount = 10000    --StatGetInt("BANK_BALANCE",-1)
 				PlayerCashAm = 10000  --StatGetInt("MP0_WALLET_BALANCE",-1)
-				
+
 				if PayWithBank == 1 then
 					XNLUserMoney = BankAmount
 				else
@@ -357,14 +357,14 @@ Citizen.CreateThread(function()
 				--==================================================================
 				if XNLUserMoney < TicketPrice then
 					if UserBankIDi == 1 then		  		-- Maze Bank
-						BankIcon = "CHAR_BANK_MAZE"		
+						BankIcon = "CHAR_BANK_MAZE"
 						BankName = "Maze Bank"
 					end
 					if UserBankIDi == 2 then				-- Bank Of Liberty
 						BankIcon = "CHAR_BANK_BOL"
 						BankName = "Bank Of Liberty"
 					end
-					
+
 					if UserBankIDi == 3 then		  		-- Fleeca (Default Fallback to!)
 						BankIcon = "CHAR_BANK_FLEECA"
 						BankName = "Fleeca Bank"
@@ -378,27 +378,27 @@ Citizen.CreateThread(function()
 						-- Put YOUR code to deduct the amount from the players CASH money account here
 						-- 'Basic Example':  PlayerCash = PlayerCash - TicketPrice
 					end
-				
+
 					SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['ticket_purchased'], true)
 					PlayerHasMetroTicket = true
 				end
-				
+
 				IsPlayerUsingTicketMachine = false
 			end
 		else
 			ShowedBuyTicketHelper = false
 		end
-		
+
 
 
 		-- E/Action key (There will only be checked for trains when the player presses the action key)
 		-- This Section is used to ENTER the Metro
-		if IsControlJustPressed(0, 51) then	
+		if IsControlJustPressed(0, 51) then
 			playerPed = PlayerPedId()
 			x,y,z = table.unpack(GetEntityCoords(playerPed, true))
 			IsPlayerInVehicle = IsPedInAnyVehicle(playerPed, true)
 			SkipReEnterCheck = false
-			
+
 			if IsPlayerInMetro then
 				if XNLCanPlayerExitTrain() then
 					if not XNLTeleportPlayerToNearestMetroExit() then
@@ -413,9 +413,9 @@ Citizen.CreateThread(function()
 					SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['sorry'].." "..Message[Language][XNLGenMess].." "..Message[Language]['exit_metro_random'], true)
 				end
 			end
-			
+
 			--===============================================
-			-- Make sure the player is NOT in a vehicle and 
+			-- Make sure the player is NOT in a vehicle and
 			-- NOT already on the Metro
 			--===============================================
 			if not IsPlayerNearMetro and not IsPlayerInMetro and not SkipReEnterCheck then
@@ -442,12 +442,12 @@ Citizen.CreateThread(function()
 									CurrentMetro = Metro
 									MetroX, MetroY, MetroZ = table.unpack(GetOffsetFromEntityInWorldCoords(CurrentMetro, 0.0, 0.0, 0.0))
 									IsPlayerNearMetro = true
-									
-									-- Extra Info: Use the commentented line bellow to put passengers on 
+
+									-- Extra Info: Use the commentented line bellow to put passengers on
 									-- a seat in the train. DO NOTE! that you will need to make a (simple)
 									-- check to detect if the seat is not taken by a ped or another player!
 									-- for the function bellow you can use inded 1 or 2 (the last parm)
-									--SetPedIntoVehicle(GetPlayerPed(-1), Metro, 1) 
+									--SetPedIntoVehicle(GetPlayerPed(-1), Metro, 1)
 									SetEntityCoordsNoOffset(PlayerPedId(), MetroX, MetroY, MetroZ + 2.0)
 									IsPlayerInMetro = true
 									PlayerHasMetroTicket = false
@@ -486,7 +486,7 @@ Citizen.CreateThread(function()
 					end
 				end
 			end
-			
+
 			if not DoesEntityExist(CurrentMetro) then
 				-- Not ANY clue on when this might happen haha, but it's a funny message and error handler in one :Phone_SoundSet_Default
 				-- we have seen it happen once or so in MANY test rounds of the metro system that the metro just vanished, so this is to
@@ -502,7 +502,7 @@ Citizen.CreateThread(function()
 						DisplayHelpText("Press ~INPUT_CONTEXT~ to leave the metro")
 						ShowedLeaveMetroHelper = true
 					end
-					
+
 					-- This part detects if the player is further away than 15.0 units from the Metro he/she used
 					MetroX, MetroY, MetroZ = table.unpack(GetOffsetFromEntityInWorldCoords(CurrentMetro, 0.0, 0.0, 0.0))
 					x,y,z = table.unpack(GetEntityCoords(playerPed, true))
@@ -511,11 +511,11 @@ Citizen.CreateThread(function()
 						IsPlayerInMetro = false
 						SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['travel_metro'], true)
 					end
-					
+
 				end
 			end
 		end
-		
+
 	end
 end)
 
@@ -536,17 +536,17 @@ Citizen.CreateThread(function()
 			end
 			ShowedEToEnterMetro = false
 		end
-		
+
 		-- We only have to check this part if the player is NOT on the metro.
 		if not IsPlayerInMetro then
 			playerPed = PlayerPedId()
 			IsPlayerInVehicle = IsPedInAnyVehicle(playerPed, true)
-	
-			-- And then ONLY check it if the player isn't in a vehicle either 
+
+			-- And then ONLY check it if the player isn't in a vehicle either
 			-- Note: The way i'm using the metro, the game doesn't recognize it as being
 			-- on/in a vehicle.
 			if not IsPlayerInVehicle then
-				
+
 				-- Yes, yes I know, the function is called 'XNLCanPlayerEXITTrain', but it
 				-- is also used to detect if the player is at one of the stations on foot :)
 				if PlayerHasMetroTicket and XNLCanPlayerExitTrain() then
@@ -557,7 +557,7 @@ Citizen.CreateThread(function()
 				else
 					ShowedEToEnterMetro = false
 				end
-			
+
 				-- Only show the "Press [E] to buy...." message near the ticket machine if the player does NOT own a ticket already
 				-- Do note that it IS possible to 'activate' the ticket machine again though (but will give a different message ;) )
 				x,y,z = table.unpack(GetEntityCoords(playerPed, true))
@@ -661,15 +661,15 @@ function XNLTeleportPlayerToNearestMetroExit()
 					XNLNewY = item2.y -- The 'new' Player Y position
 					XNLNewZ = item2.z -- The 'new' Player Z position
 					XNLNewH = item2.h -- The 'new' Player Heading Direction
-		
+
 					SetEntityCoordsNoOffset(PlayerPedId(), XNLNewX, XNLNewY, XNLNewZ)
 					SetEntityHeading(PlayerPedId(), XNLNewH)
-		
+
 					DoScreenFadeIn(800)
 					while not IsScreenFadedIn() do
 						Wait(10)
 					end
-					return true 
+					return true
 				end
 			end
 		end
