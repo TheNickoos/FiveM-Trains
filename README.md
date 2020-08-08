@@ -3,7 +3,7 @@ Based on/inspired by:
 Blumlaut (FiveM Community) / Bluethefurry (Github)
 Original Post:	 		https://forum.fivem.net/t/release-trains/28841
 Original Script: 		https://github.com/Bluethefurry/FiveM-Trains/releases
-Reworked by VenomXNL :	https://forum.cfx.re/t/release-fivem-freight-train-ai-and-enterable-trams-as-passenger-suited-for-roleplay-to/268613
+Reworked by VenomXNL :		https://forum.cfx.re/t/release-fivem-freight-train-ai-and-enterable-trams-as-passenger-suited-for-roleplay-to/268613
 
 Re-reworked by Nickoos
 License: Use it as you please but do have decency and respect by crediting the original creators :)
