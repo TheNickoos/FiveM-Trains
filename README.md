@@ -1,3 +1,8 @@
+================================================================================
+IF there are questions, help needed or anything, please use the FiveM FORUM
+topic to discuss and help each other.
+================================================================================
+
 Based on/inspired by:
 
 Blumlaut (FiveM Community) / Bluethefurry (Github)
