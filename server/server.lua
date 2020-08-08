@@ -7,12 +7,14 @@
 
 local trainspawned = false
 local trainHost = nil
+local choosingRandom = nil
 
 RegisterServerEvent("FiveM-Trains:PlayerSpawned")
 AddEventHandler('FiveM-Trains:PlayerSpawned', function()
 	local _source = source
 	SpawnTrain(_source)
 end)
+
 
 RegisterServerEvent("playerDropped")
 AddEventHandler('playerDropped', function()
@@ -26,12 +28,24 @@ AddEventHandler('playerDropped', function()
 	end
 end)
 
+-- Not sure if it will work
+-- Need more test
+RegisterServerEvent("FiveM-Trains:SelectRandomPlayer")
+AddEventHandler('FiveM-Trains:SelectRandomPlayer', function()
+	if not choosingRandom then
+		choosingRandom = source
+		ChooseRandomPlayer(0) -- We choose a random player for spawning the train
+	end
+end)
+
+
 function ChooseRandomPlayer(leaver)
 	local hostfound = false
 	for _, playerId in ipairs(GetPlayers()) do -- Yeah, pretty bad "random". We just take the first player we get in the list
 		if tonumber(playerId) ~= tonumber(leaver) then -- Actually, the player is still in the list of players, even if he leaved the game, so we ignore him
 			SpawnTrain(playerId)
 			hostfound = true
+			choosingRandom = nil
 			break -- Don't need to let the for continue. We stop it.
 		end
 	end

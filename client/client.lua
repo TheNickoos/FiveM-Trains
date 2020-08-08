@@ -4,13 +4,16 @@
 -- Modifying these might/will result in undesired
 -- behaviour and/or script breaking!
 --===================================================
-IsPlayerNearMetro = false
-IsPlayerInMetro = false
-PlayerHasMetroTicket = false
-IsPlayerUsingTicketMachine = false
-ShowingExitMetroMessage = false
-EverythingisK = false
-
+local IsPlayerNearMetro = false
+local IsPlayerInMetro = false
+local PlayerHasMetroTicket = false
+local IsPlayerUsingTicketMachine = false
+local ShowingExitMetroMessage = false
+local EverythingisK = false
+local Train = nil
+local MetroTrain = nil
+local MetroTrain2 = nil
+local MetroTrainStopped = {}
 
 --===================================================
 -- These are radius locations (multiple per station)
@@ -74,7 +77,7 @@ local XNLMetroScanPoints = {
 
 -- These are the 'exit points' to where the player is teleported with the short fade-out / fade-in
 -- NOTE: XNLStationid is NOT used in this table, it's just here for user refrence!
- local XNLMetroEXITPoints = {
+local XNLMetroEXITPoints = {
 	{XNLStationid=0, x=294.46011352539, y=-1203.5991210938, z=38.902496337891, h=90.168075561523},
 	{XNLStationid=1, x=-294.76913452148, y=-303.44619750977, z=10.063159942627, h=185.19216918945},
 	{XNLStationid=2, x=-839.20843505859, y=-151.43312072754, z=19.950380325317, h=298.70877075195},
@@ -87,6 +90,48 @@ local XNLMetroScanPoints = {
 	{XNLStationid=9, x=-1099.6376953125, y=-2734.8957519531, z=-7.410129070282, h=314.91424560547}
 }
 
+-- This is all our "Stop" station for the metro.
+local MetroTrainstops = {
+	-- Los Santos AirPort (airport front door entrance)
+	{x=-1088.627, y=-2709.362, z=-7.137033},
+	{x=-1081.309, y=-2725.259, z=-7.137033},
+
+	-- Los Santos AirPort (car park/highway entrance)
+	{x=-889.2755, y=-2311.825, z=-11.45941},
+	{x=-876.7512, y=-2323.808, z=-11.45609},
+
+	-- Little Seoul (near los santos harbor)
+	{x=-545.3138, y=-1280.548, z=27.09238},
+	{x=-536.8082, y=-1286.096, z=27.08238},
+
+	-- Strawberry (near strip club)
+	{x=270.2029, y=-1210.818, z=39.25398},
+	{x=265.3616, y=-1198.051, z=39.23406},
+
+	-- Rockford Hills (San Vitus Blvd)
+	{x=-286.3837, y=-318.877, z=10.33625},
+	{x=-302.6719, y=-322.995, z=10.33629},
+
+	-- Rockford Hills (Near golf club)
+	{x=-826.3845, y=-134.7151, z=20.22362},
+	{x=-816.7159, y=-147.4567, z=20.2231},
+
+	-- Del Perro (Near beach)
+	{x=-1351.282, y=-481.2916, z=15.318},
+	{x=-1341.085, y=-467.674, z=15.31838},
+
+	-- Little Seoul
+	{x=-496.0209, y=-681.0325, z=12.08264},
+	{x=-495.8456, y=-665.4668, z=12.08244},
+
+	-- Pillbox Hill (Downtown)
+	{x=-218.2868, y=-1031.54, z=30.51112},
+	{x=-209.6845, y=-1037.544, z=30.50939},
+
+	-- Davis (Gang / hood area)
+	{x=112.3714, y=-1729.233, z=30.24097},
+	{x=120.0308, y=-1723.956, z=30.31433},
+}
 
 local TicketMachines = {'prop_train_ticket_02', 'prop_train_ticket_02_tu', 'v_serv_tu_statio3_'}
 local anim = "mini@atmenter"
@@ -176,20 +221,6 @@ Citizen.CreateThread(function()
 			yesorno = false
 		end
 
-		--====================================================================================
-		-- Note: This (DeleteAllTrains()) might work when you join a session or so which
-		-- has 'roque trains' (aka with no host or where the host just left while you joined)
-		-- but I (VenomXNL) have noticed that it has no effect at all when the script is
-		-- restarted and clients stay in the session, however it will not spawn any new ones
-		-- either since it doesn't detect a player connecting.
-		-- I suspect that it doesn't remove/delete the trains since the game would still see
-		-- them as Mission Trains which would require the native deleteMissionTrain.
-		-- Although it is impossible to call this native since after a restart of this script
-		-- we no longer have a refrence to call them.
-		-- I will leave the call here as intended by the original developer, but I SUSPECT
-		-- that it would not have much use (but can't confirm it with 100% certainty though)
-		--====================================================================================
-		DeleteAllTrains()
 		Wait(100)
 		Train = CreateMissionTrain(math.random(0,22), x,y,z,yesorno)
 		if Debug then print("FiveM-Trains: Train 1 created (Freight)." ) end
@@ -197,6 +228,7 @@ Citizen.CreateThread(function()
 			Wait(800)
 			if Debug then print("FiveM-Trains: Waiting for Freight to be created" ) end
 		end
+		SetTrainCruiseSpeed(Train, 15.0)
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
 
@@ -206,6 +238,7 @@ Citizen.CreateThread(function()
 			Wait(800)
 			if Debug then print("FiveM-Trains: Waiting for Metro Train 1 to be created" ) end -- Also wait until the train entity has actually been created
 		end
+		SetTrainCruiseSpeed(MetroTrain, 15.0)
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
 
@@ -216,6 +249,7 @@ Citizen.CreateThread(function()
 				Wait(800)
 				if Debug then  print("FiveM-Trains: Waiting for Metro Train 2 to be created" ) end -- Also wait until the train entity has actually been created
 			end
+			SetTrainCruiseSpeed(MetroTrain2, 15.0)
 		end
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
@@ -677,9 +711,95 @@ function XNLTeleportPlayerToNearestMetroExit()
 	return false -- The function did NOT detected the player within one of the radius markers at the stations
 end
 
+Citizen.CreateThread(function()
+	while EverythingisK == false do Citizen.Wait(0) end
+	while true do
+		Citizen.Wait(0)
+		if DoesEntityExist(MetroTrain) then
+			if not MetroTrainStopped[MetroTrain] then
+				local coords = GetEntityCoords(MetroTrain)
+				if coords then
+					local closest = 10
+					for k,v in ipairs(MetroTrainstops) do
+						local dstcheck = GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true)
+						if dstcheck <= closest then
+							StopTrain(MetroTrain)
+						end
+					end
+				end
+			end
+		end
+		if DoesEntityExist(MetroTrain2) then
+			if not MetroTrainStopped[MetroTrain2] then
+				local coords = GetEntityCoords(MetroTrain2)
+				if coords then
+					local closest = 10
+					for k,v in ipairs(MetroTrainstops) do
+						local dstcheck = GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true)
+						if dstcheck <= closest then
+							StopTrain(MetroTrain2)
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
+local function removebyKey(tab, val)
+    for i, v in ipairs (tab) do
+        if (v == val) then
+          tab[i] = nil
+        end
+    end
+end
+
+function StopTrain(train)
+	if (NetworkHasControlOfEntity(train)) then
+		table.insert(MetroTrainStopped, train)
+
+		SetTrainCruiseSpeed(train, 0.0) -- We stop the train
+		Citizen.Wait(100)
+		local trainCarriage = GetTrainCarriage(train, 1) -- We get the Carriage of the train for openning his door too
+		if train ~= nil and trainCarriage ~= nil then
+--			local doors = GetNumberOfVehicleDoors(train)
+--			local doors2 = GetNumberOfVehicleDoors(trainCarriage)
+			local stoppedTimer = GetGameTimer();
+			while (GetGameTimer() - stoppedTimer < (20 * 1000)) do -- We stop the train for 20 sec. With a Citizen.wait, our variable is destroyed. So we need to keep up.
+
+-- For the moment, I don't put these in production cause you can enter/leave the train without a ticket if we open the doors at stop.
+-- Until I found a solution, I keep this commented
+--				for i = 1, doors do
+--					SetVehicleDoorOpen(train, i, false, false)
+--					SetVehicleDoorBroken(train, i, true) -- We "broke" the door for making them really open.
+--				end
+--				for i = 1, doors2 do
+--					SetVehicleDoorOpen(trainCarriage, i, false, false)
+--					SetVehicleDoorBroken(trainCarriage, i, true)
+--				end
+				Citizen.Wait(0)
+			end
+--			SetVehicleFixed(train); -- Now, we "fix" the door for closing them :D
+--			SetVehicleFixed(trainCarriage);
+			Citizen.Wait(1000)
+--			SetVehicleDoorsShut(train)
+--			SetVehicleDoorsShut(trainCarriage)
+			Citizen.Wait(1000)
+
+		end
+		Citizen.Wait(100)
+		SetTrainCruiseSpeed(train, 15.0) -- Bye bye train !
+
+		Citizen.Wait(100)
+		local timer = GetGameTimer();
+		while (GetGameTimer() - timer < 5000) do -- After 5 sec, we can tell that train have "finished" their stop.
+			removebyKey(MetroTrainStopped, train)
+			Citizen.Wait(0)
+		end
+	end
+end
 
 -- Added for OneSync
-
 local firstspawn = 0 -- By default, Its the first spawn of the player. So, I don't recommend to restart the script with already player in the server.
 
 AddEventHandler('playerSpawned', function()
@@ -688,4 +808,25 @@ AddEventHandler('playerSpawned', function()
 		TriggerServerEvent('FiveM-Trains:PlayerSpawned')
 		firstspawn = 1 -- Just for making not trigger the event if he respawn after die.
 	end
+end)
+
+-- This is added if we restart the ressource.
+-- Needed for the dev. May be I will remove it later.
+-- This remove all train
+AddEventHandler('onResourceStop', function(resourceName)
+	if (GetCurrentResourceName() ~= resourceName) then
+		return
+	end
+	DeleteMissionTrain(MetroTrain)
+	DeleteMissionTrain(MetroTrain2)
+	DeleteMissionTrain(Train)
+end)
+
+-- And this, if we start the ressource with already player on it
+-- Select a random player to be the host
+AddEventHandler('onResourceStart', function(resourceName)
+	if (GetCurrentResourceName() ~= resourceName) then
+		return
+	end
+	TriggerServerEvent('FiveM-Trains:SelectRandomPlayer')
 end)
