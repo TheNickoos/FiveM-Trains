@@ -13,6 +13,9 @@ local EverythingisK = false
 local Train = nil
 local MetroTrain = nil
 local MetroTrain2 = nil
+local Driver1 = nil
+local Driver2 = nil
+local Driver3 = nil
 local MetroTrainStopped = {}
 
 --===================================================
@@ -99,19 +102,19 @@ local MetroTrainstops = {
 	-- Los Santos AirPort (car park/highway entrance)
 	{x=-889.2755, y=-2311.825, z=-11.45941},
 	{x=-876.7512, y=-2323.808, z=-11.45609},
-
+	
 	-- Little Seoul (near los santos harbor)
 	{x=-545.3138, y=-1280.548, z=27.09238},
 	{x=-536.8082, y=-1286.096, z=27.08238},
-
+	
 	-- Strawberry (near strip club)
 	{x=270.2029, y=-1210.818, z=39.25398},
 	{x=265.3616, y=-1198.051, z=39.23406},
-
+	
 	-- Rockford Hills (San Vitus Blvd)
 	{x=-286.3837, y=-318.877, z=10.33625},
 	{x=-302.6719, y=-322.995, z=10.33629},
-
+	
 	-- Rockford Hills (Near golf club)
 	{x=-826.3845, y=-134.7151, z=20.22362},
 	{x=-816.7159, y=-147.4567, z=20.2231},
@@ -119,7 +122,7 @@ local MetroTrainstops = {
 	-- Del Perro (Near beach)
 	{x=-1351.282, y=-481.2916, z=15.318},
 	{x=-1341.085, y=-467.674, z=15.31838},
-
+	
 	-- Little Seoul
 	{x=-496.0209, y=-681.0325, z=12.08264},
 	{x=-495.8456, y=-665.4668, z=12.08244},
@@ -228,7 +231,20 @@ Citizen.CreateThread(function()
 			Wait(800)
 			if Debug then print("FiveM-Trains: Waiting for Freight to be created" ) end
 		end
-		SetTrainCruiseSpeed(Train, 15.0)
+		
+		if ShowTrainBlips then
+			local TrainBlip = AddBlipForEntity(Train)      
+			SetBlipSprite (TrainBlip, 660)
+			SetBlipDisplay(TrainBlip, 4)
+			SetBlipScale  (TrainBlip, 0.8)
+			SetBlipColour (TrainBlip, 2)
+			SetBlipAsShortRange(TrainBlip, true)
+			BeginTextCommandSetBlipName("STRING")
+			AddTextComponentString("Train")
+			EndTextCommandSetBlipName(TrainBlip)
+		end
+		
+		SetTrainCruiseSpeed(Train, 20.0)
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
 
@@ -238,6 +254,19 @@ Citizen.CreateThread(function()
 			Wait(800)
 			if Debug then print("FiveM-Trains: Waiting for Metro Train 1 to be created" ) end -- Also wait until the train entity has actually been created
 		end
+		
+		if ShowTrainBlips then
+			local MetroBlip = AddBlipForEntity(MetroTrain)      
+			SetBlipSprite (MetroBlip, 660)
+			SetBlipDisplay(MetroBlip, 4)
+			SetBlipScale  (MetroBlip, 0.8)
+			SetBlipColour (MetroBlip, 2)
+			SetBlipAsShortRange(MetroBlip, true)
+			BeginTextCommandSetBlipName("STRING")
+			AddTextComponentString("Metro")
+			EndTextCommandSetBlipName(MetroBlip)
+		end
+		
 		SetTrainCruiseSpeed(MetroTrain, 15.0)
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
 				  -- random unexplained spawning of the freight train on the Metro Rails
@@ -249,6 +278,18 @@ Citizen.CreateThread(function()
 				Wait(800)
 				if Debug then  print("FiveM-Trains: Waiting for Metro Train 2 to be created" ) end -- Also wait until the train entity has actually been created
 			end
+			if ShowTrainBlips then
+				local Metro2Blip = AddBlipForEntity(MetroTrain2)      
+				SetBlipSprite (Metro2Blip, 660)
+				SetBlipDisplay(Metro2Blip, 4)
+				SetBlipScale  (Metro2Blip, 0.8)
+				SetBlipColour (Metro2Blip, 2)
+				SetBlipAsShortRange(Metro2Blip, true)
+				BeginTextCommandSetBlipName("STRING")
+				AddTextComponentString("Metro")
+				EndTextCommandSetBlipName(Metro2Blip)
+			end
+			
 			SetTrainCruiseSpeed(MetroTrain2, 15.0)
 		end
 		Wait(200) -- Added a small 'waiting' while the train is loaded (to prevent the)
@@ -474,15 +515,13 @@ Citizen.CreateThread(function()
 									SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['have_wantedlevel'], true)
 								else
 									CurrentMetro = Metro
-									MetroX, MetroY, MetroZ = table.unpack(GetOffsetFromEntityInWorldCoords(CurrentMetro, 0.0, 0.0, 0.0))
 									IsPlayerNearMetro = true
-
-									-- Extra Info: Use the commentented line bellow to put passengers on
-									-- a seat in the train. DO NOTE! that you will need to make a (simple)
-									-- check to detect if the seat is not taken by a ped or another player!
-									-- for the function bellow you can use inded 1 or 2 (the last parm)
-									--SetPedIntoVehicle(GetPlayerPed(-1), Metro, 1)
-									SetEntityCoordsNoOffset(PlayerPedId(), MetroX, MetroY, MetroZ + 2.0)
+									if FreeWalk then
+										MetroX, MetroY, MetroZ = table.unpack(GetOffsetFromEntityInWorldCoords(CurrentMetro, 0.0, 0.0, 0.0))
+										SetEntityCoordsNoOffset(PlayerPedId(), MetroX, MetroY, MetroZ + 2.0)
+									else							
+										SetPedIntoVehicle(GetPlayerPed(-1), CurrentMetro, 1)
+									end
 									IsPlayerInMetro = true
 									PlayerHasMetroTicket = false
 									SMS_Message("CHAR_LS_TOURIST_BOARD", Message[Language]['los_santos_transit'], Message[Language]['tourist_information'], Message[Language]['entered_metro'], true)
@@ -715,14 +754,13 @@ Citizen.CreateThread(function()
 	while EverythingisK == false do Citizen.Wait(0) end
 	while true do
 		Citizen.Wait(0)
+		local closest = 10
 		if DoesEntityExist(MetroTrain) then
 			if not MetroTrainStopped[MetroTrain] then
 				local coords = GetEntityCoords(MetroTrain)
 				if coords then
-					local closest = 10
 					for k,v in ipairs(MetroTrainstops) do
-						local dstcheck = GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true)
-						if dstcheck <= closest then
+						if GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) <= closest then
 							StopTrain(MetroTrain)
 						end
 					end
@@ -733,10 +771,8 @@ Citizen.CreateThread(function()
 			if not MetroTrainStopped[MetroTrain2] then
 				local coords = GetEntityCoords(MetroTrain2)
 				if coords then
-					local closest = 10
 					for k,v in ipairs(MetroTrainstops) do
-						local dstcheck = GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true)
-						if dstcheck <= closest then
+						if GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) <= closest then
 							StopTrain(MetroTrain2)
 						end
 					end
@@ -746,51 +782,22 @@ Citizen.CreateThread(function()
 	end
 end)
 
-local function removebyKey(tab, val)
-    for i, v in ipairs (tab) do
-        if (v == val) then
-          tab[i] = nil
-        end
-    end
-end
-
 function StopTrain(train)
 	if (NetworkHasControlOfEntity(train)) then
-		table.insert(MetroTrainStopped, train)
-
+		table.insert(MetroTrainStopped, train) 
 		SetTrainCruiseSpeed(train, 0.0) -- We stop the train
 		Citizen.Wait(100)
-		local trainCarriage = GetTrainCarriage(train, 1) -- We get the Carriage of the train for openning his door too
-		if train ~= nil and trainCarriage ~= nil then
---			local doors = GetNumberOfVehicleDoors(train)
---			local doors2 = GetNumberOfVehicleDoors(trainCarriage)
+		if train ~= nil then
 			local stoppedTimer = GetGameTimer();
+			repeat 
+				Citizen.Wait(0)
+			until GetEntitySpeed(train) <= 0
 			while (GetGameTimer() - stoppedTimer < (20 * 1000)) do -- We stop the train for 20 sec. With a Citizen.wait, our variable is destroyed. So we need to keep up.
-
--- For the moment, I don't put these in production cause you can enter/leave the train without a ticket if we open the doors at stop.
--- Until I found a solution, I keep this commented
---				for i = 1, doors do
---					SetVehicleDoorOpen(train, i, false, false)
---					SetVehicleDoorBroken(train, i, true) -- We "broke" the door for making them really open.
---				end
---				for i = 1, doors2 do
---					SetVehicleDoorOpen(trainCarriage, i, false, false)
---					SetVehicleDoorBroken(trainCarriage, i, true)
---				end
 				Citizen.Wait(0)
 			end
---			SetVehicleFixed(train); -- Now, we "fix" the door for closing them :D
---			SetVehicleFixed(trainCarriage);
-			Citizen.Wait(1000)
---			SetVehicleDoorsShut(train)
---			SetVehicleDoorsShut(trainCarriage)
-			Citizen.Wait(1000)
-
 		end
 		Citizen.Wait(100)
 		SetTrainCruiseSpeed(train, 15.0) -- Bye bye train !
-
-		Citizen.Wait(100)
 		local timer = GetGameTimer();
 		while (GetGameTimer() - timer < 5000) do -- After 5 sec, we can tell that train have "finished" their stop.
 			removebyKey(MetroTrainStopped, train)
@@ -820,13 +827,4 @@ AddEventHandler('onResourceStop', function(resourceName)
 	DeleteMissionTrain(MetroTrain)
 	DeleteMissionTrain(MetroTrain2)
 	DeleteMissionTrain(Train)
-end)
-
--- And this, if we start the ressource with already player on it
--- Select a random player to be the host
-AddEventHandler('onResourceStart', function(resourceName)
-	if (GetCurrentResourceName() ~= resourceName) then
-		return
-	end
-	TriggerServerEvent('FiveM-Trains:SelectRandomPlayer')
 end)

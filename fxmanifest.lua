@@ -3,6 +3,7 @@ client_scripts {
 	'Locales/en.lua',
 	'Locales/es.lua',
 	'Locales/fr.lua',
+	'client/function.lua',
 	'client/client.lua'
 }
 
