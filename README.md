@@ -30,8 +30,6 @@
 	  - Players COULD enter the Metro ANYWHERE (if they have a Ticket Of course), by making it stop (stand in front of it)
 	  
 	Known 'bugs' or 'issues':
-	  - The Metro's DO NOT stop at the stations this is due to a limitation in the 'official game script'!
-	    I CAN change this and HAD changed this, but this will increase the chance of de-syncing A LOT so I've removed it!
 	  - When you enter the Metro as passenger the doors 'will dissapear', why? I don't know, but you can NOT walk through it!
 		NOTE: They CAN still be used as cover though (the bottom part), which means the 'collision info' will remain active though.
 	  - The ticket machines above ground (the green/old ones) DO NOT WORK, I tried for several hours to find them in the archives but
