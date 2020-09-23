@@ -53,7 +53,7 @@
 	  - A: Yes, I have. And I have even DELETED THE CODE, so I will NOT remake it, since it's not stable enough.
 	  
 	  Well that's about the 'main question' I expect to show up (since nearly everyone whom tested it did so to)
-	  So my basic awnser is: NOPE I will note make it like that sorry.
+	  So my basic answer is: NOPE I will note make it like that sorry.
 	  Maybe there are others whom have managed to do it, and did made a syncing system (server sided or so), I haven't
 	  and I won't, Sorry. Most of my scripts and server are client-sided with minimal network traffic (via scripting),
 	  only statistics, financials and owned matterials (like houses, cars or items) are server sided to prevent cheating.
